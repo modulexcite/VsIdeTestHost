@@ -9,7 +9,7 @@ before_build:
 
     (new-object Net.WebClient).DownloadFile("http://www.nuget.org/nuget.exe", $nugetExe)   
     
-    . $nugetExe restore T4Toolbox.sln
+    . $nugetExe restore MSTest.VSHost.sln
 build:
   parallel: true
   verbosity: minimal
