@@ -5,6 +5,7 @@ VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FC08910D-9DE8-4B2B-9949-A1411DD1DD40}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		AssemblyInfo.cs = AssemblyInfo.cs
 		Common.props = Common.props
 		LICENSE = LICENSE
