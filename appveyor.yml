@@ -7,12 +7,7 @@ branches:
   - develop
 configuration: Release
 before_build:
-- ps: >-
-    $nugetExe = [IO.Path]::Combine((Get-Location).Path, "nuget.exe")
-
-    (new-object Net.WebClient).DownloadFile("http://www.nuget.org/nuget.exe", $nugetExe)   
-    
-    . $nugetExe restore MSTest.VSHost.sln
+- nuget restore
 build:
   parallel: false
   verbosity: detailed
