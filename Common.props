@@ -34,6 +34,12 @@
     <StyleCopEnabled>false</StyleCopEnabled>
   </PropertyGroup>
 
+  <!-- Test Project Properties -->
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <!-- We don't want to require doc comments for tests -->
+    <DocumentationFile/>
+  </PropertyGroup>
+
   <!-- Sign assemblies if the Private.snk file is present -->
   <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)\Private.snk')">
     <SignAssembly>true</SignAssembly>
