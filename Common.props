@@ -4,7 +4,7 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>MSTest.VSHost.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>VsIdeTestHost.$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
     <OutputType>Library</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
