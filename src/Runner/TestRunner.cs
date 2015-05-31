@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Concurrent;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
 using Microsoft.VisualStudio.TestTools.TestAdapter;
@@ -10,80 +11,116 @@ using Microsoft.VisualStudio.TestTools.TestAdapter;
 namespace VsIdeTestHost.Runner
 {
     /// <summary>
-    /// TODO: Add documentation when this class is implemented.
+    /// Created by the hosting process receive .NET remoting calls from the test controller and 
+    /// run tests using locally installed test adapters.
     /// </summary>
-    public class TestRunner : ITestAdapter
+    public class TestRunner : MarshalByRefObject, ITestAdapter
     {
+        private readonly TestAdapterFactory factory;
+        private readonly ConcurrentDictionary<string, ITestAdapter> adapters;
+        private IRunContext runContext;
+
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Initializes a new instance of the <see cref="TestRunner"/> class.
+        /// </summary>
+        public TestRunner(TestAdapterFactory factory)
+        {
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            this.factory = factory;
+            this.adapters = new ConcurrentDictionary<string, ITestAdapter>();
+        }
+
+        /// <summary>
+        /// Aborts test run of the previously instantiated test adapters.
         /// </summary>
         public void AbortTestRun()
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.AbortTestRun());
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Cleans up and releases the previously instantiated test adapters.
         /// </summary>
         public void Cleanup()
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.Cleanup());
+            this.adapters.Clear();
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Stores the given <see cref="IRunContext"/> to for future initialization of test adapters running tests.
         /// </summary>
         public void Initialize(IRunContext runContext)
         {
-            throw new NotImplementedException();
+            this.runContext = runContext;
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Pauses test run of the previously instantiated test adapters.
         /// </summary>
         public void PauseTestRun()
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.PauseTestRun());
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Notifies the previously instantiated test adapters about test run finishing.
         /// </summary>
         public void PreTestRunFinished(IRunContext runContext)
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.PreTestRunFinished(runContext));
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Passes a <paramref name="message"/> to the previously instantiated test adapters.
         /// </summary>
         public void ReceiveMessage(object message)
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.ReceiveMessage(message));
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Resumes test run of the previously instantiated test adapters.
         /// </summary>
         public void ResumeTestRun()
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.ResumeTestRun());
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Runs a test using the <see cref="ITestAdapter"/> of type specified in the <see cref="ITestElement"/>.
         /// </summary>
         public void Run(ITestElement testElement, ITestContext testContext)
         {
-            throw new NotImplementedException();
+            ITestAdapter adapter = this.adapters.GetOrAdd(testElement.Adapter, this.CreateTestAdapter);
+            adapter.Run(testElement, testContext);
         }
 
         /// <summary>
-        /// TODO: Add documentation when this method is implemented.
+        /// Stops test run of the previously instantiated test adapters.
         /// </summary>
         public void StopTestRun()
         {
-            throw new NotImplementedException();
+            this.ForEachAdapter(adapter => adapter.StopTestRun());
+        }
+
+        private ITestAdapter CreateTestAdapter(string typeName)
+        {
+            ITestAdapter adapter = this.factory.CreateTestAdapter(typeName);
+            adapter.Initialize(this.runContext);
+            return adapter;
+        }
+
+        private void ForEachAdapter(Action<ITestAdapter> action)
+        {
+            foreach (ITestAdapter adapter in this.adapters.Values)
+            {
+                action(adapter);
+            }
         }
     }
 }
