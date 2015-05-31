@@ -45,6 +45,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestAdapterFactoryTest.cs" />
     <Compile Include="TestRunnerTest.cs" />
   </ItemGroup>
   <ItemGroup>
