@@ -20,7 +20,7 @@ namespace VsIdeTestHost.Runner.Tests
             Assert.IsType<StubTestAdapter>(adapter);
         }
 
-        public class StubTestAdapter : ITestAdapter
+        public sealed class StubTestAdapter : ITestAdapter
         {
             void IBaseAdapter.AbortTestRun()
             {
